@@ -1,0 +1,13 @@
+{
+  "username": "",
+  "password": "",
+
+  "first-lesson-start": "11:10",
+  "first-lesson-end": "12:30",
+  "second-lesson-start": "12:40",
+  "second-lesson-end": "14:00",
+  "third-lesson-start": "14:10",
+  "third-lesson-end": "15:30",
+  "fourth-lesson-start": "15:50",
+  "fourth-lesson-end": "17:10"
+}
