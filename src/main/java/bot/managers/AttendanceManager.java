@@ -24,17 +24,18 @@ public class AttendanceManager {
 
 		do {
 			checkAttendances();
+			checkAttendances();
 			currentTime = LocalTime.now();
 
 			boolean isLessonNow = checkLessonContinues(currentTime);
 			long timeToSleep = isLessonNow
-					? 300000
+					? 300_000
 					: getTimeToLessonStart(currentTime);
 
 			try {
 				Thread.sleep(timeToSleep);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				break;
 			}
 		} while (currentTime.compareTo(TimeConstants.FOURTH_LESSON_END) < 0);
 	}
@@ -73,6 +74,7 @@ public class AttendanceManager {
 		attendance.click();
 
 		WebElement sendAttendanceButton = findElementByCssSelector("td.statuscol.cell.c2.lastcol>a");
+		System.out.println(sendAttendanceButton.getText());
 		sendAttendanceButton.click();
 
 		WebElement sendPresentButton = findElementByCssSelector("label.form-check-inline.form-check-label");
