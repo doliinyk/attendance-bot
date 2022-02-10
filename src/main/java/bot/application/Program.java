@@ -1,6 +1,5 @@
 package bot.application;
 
-import bot.constants.TimeConstants;
 import bot.managers.AttendanceManager;
 import bot.managers.ConfigManager;
 import bot.managers.OperationsManager;

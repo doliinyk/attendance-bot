@@ -92,6 +92,10 @@ public class ConfigManager {
 				.plusSeconds(30);
 	}
 
+	public static int parseStringFromConfigToInt(String key) {
+		return Integer.parseInt(getValueFromConfig(key));
+	}
+
 	public static String getValueFromConfig(String key) {
 		return (String) configJson.get(key);
 	}

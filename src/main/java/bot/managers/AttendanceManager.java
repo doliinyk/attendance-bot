@@ -1,6 +1,5 @@
 package bot.managers;
 
-import bot.constants.TimeConstants;
 import bot.constants.UrlConstants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -34,10 +33,10 @@ public class AttendanceManager {
 
 			try {
 				Thread.sleep(timeToSleep);
-			} catch (InterruptedException e) {
+			} catch (InterruptedException | IllegalArgumentException e) {
 				break;
 			}
-		} while (currentTime.compareTo(TimeConstants.FOURTH_LESSON_END) < 0);
+		} while (currentTime.compareTo(getLastLessonToday()) < 0);
 	}
 
 	public static void loginIntoAccount() {
@@ -74,7 +73,6 @@ public class AttendanceManager {
 		attendance.click();
 
 		WebElement sendAttendanceButton = findElementByCssSelector("td.statuscol.cell.c2.lastcol>a");
-		System.out.println(sendAttendanceButton.getText());
 		sendAttendanceButton.click();
 
 		WebElement sendPresentButton = findElementByCssSelector("label.form-check-inline.form-check-label");

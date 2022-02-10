@@ -1,6 +1,6 @@
 package bot.managers;
 
-import bot.constants.TimeConstants;
+import bot.constants.LessonsConstants;
 import bot.constants.UrlConstants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -75,23 +76,62 @@ public class OperationsManager {
 	}
 
 	public static boolean checkLessonContinues(LocalTime currentTime) {
-		return (currentTime.compareTo(TimeConstants.FIRST_LESSON_START) > 0 && currentTime.compareTo(TimeConstants.FIRST_LESSON_END) < 0) || (currentTime.compareTo(TimeConstants.SECOND_LESSON_START) > 0 && currentTime.compareTo(TimeConstants.SECOND_LESSON_END) < 0) || (currentTime.compareTo(TimeConstants.THIRD_LESSON_START) > 0 && currentTime.compareTo(TimeConstants.THIRD_LESSON_END) < 0) || (currentTime.compareTo(TimeConstants.FOURTH_LESSON_START) > 0 && currentTime.compareTo(TimeConstants.FOURTH_LESSON_END) < 0);
+		return (currentTime.compareTo(LessonsConstants.FIRST_LESSON_START) > 0 && currentTime.compareTo(LessonsConstants.FIRST_LESSON_END) < 0) || (currentTime.compareTo(LessonsConstants.SECOND_LESSON_START) > 0 && currentTime.compareTo(LessonsConstants.SECOND_LESSON_END) < 0) || (currentTime.compareTo(LessonsConstants.THIRD_LESSON_START) > 0 && currentTime.compareTo(LessonsConstants.THIRD_LESSON_END) < 0) || (currentTime.compareTo(LessonsConstants.FOURTH_LESSON_START) > 0 && currentTime.compareTo(LessonsConstants.FOURTH_LESSON_END) < 0);
 	}
 
 	public static long getTimeToLessonStart(LocalTime currentTime) {
 		long[] durations = {
-				Duration.between(currentTime, TimeConstants.FIRST_LESSON_START).toMillis(),
-				Duration.between(currentTime, TimeConstants.SECOND_LESSON_START).toMillis(),
-				Duration.between(currentTime, TimeConstants.THIRD_LESSON_START).toMillis(),
-				Duration.between(currentTime, TimeConstants.FOURTH_LESSON_START).toMillis()
+				Duration.between(currentTime, LessonsConstants.FIRST_LESSON_START).toMillis(),
+				Duration.between(currentTime, LessonsConstants.SECOND_LESSON_START).toMillis(),
+				Duration.between(currentTime, LessonsConstants.THIRD_LESSON_START).toMillis(),
+				Duration.between(currentTime, LessonsConstants.FOURTH_LESSON_START).toMillis()
 		};
 
 		long minimalDuration;
 		minimalDuration = Arrays.stream(durations)
-				.filter(d -> d > 0)
+				.limit(getLessonsAmountToday())
+				.filter(d -> d >= 0)
 				.min()
 				.orElse(-1);
 
 		return minimalDuration;
+	}
+
+	public static LocalTime getLastLessonToday() {
+		int lessonsAmountToday = getLessonsAmountToday();
+
+		switch (lessonsAmountToday) {
+			case 1:
+				return LessonsConstants.FIRST_LESSON_END;
+			case 2:
+				return LessonsConstants.SECOND_LESSON_END;
+			case 3:
+				return LessonsConstants.THIRD_LESSON_END;
+			case 4:
+				return LessonsConstants.FOURTH_LESSON_END;
+			default:
+				return LocalTime.of(0, 0);
+		}
+	}
+
+	private static int getLessonsAmountToday() {
+		String currentDay = LocalDate.now()
+				.getDayOfWeek()
+				.toString();
+
+		switch (currentDay) {
+			case "MONDAY":
+				return LessonsConstants.MONDAY_LESSONS_AMOUNT;
+			case "TUESDAY":
+				return LessonsConstants.TUESDAY_LESSONS_AMOUNT;
+			case "WEDNESDAY":
+				return LessonsConstants.WEDNESDAY_LESSONS_AMOUNT;
+			case "THURSDAY":
+				return LessonsConstants.THURSDAY_LESSONS_AMOUNT;
+			case "FRIDAY":
+				return LessonsConstants.FRIDAY_LESSONS_AMOUNT;
+			default:
+				return 0;
+		}
 	}
 }
