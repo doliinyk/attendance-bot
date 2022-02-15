@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import javax.security.auth.login.LoginException;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class AttendanceManager {
 		} while (currentTime.compareTo(getLastLessonToday()) < 0);
 	}
 
-	public static void loginIntoAccount() {
+	public static void loginIntoAccount() throws LoginException {
 		driver.get(UrlConstants.LOGIN_WINDOW_URL);
 
 		ConfigManager.sendLoginKeysToWebElements();
@@ -86,9 +87,12 @@ public class AttendanceManager {
 		driver.navigate()
 				.to(UrlConstants.MAIN_WINDOW_URL);
 
-		if (driver.getCurrentUrl()
-				.equals(UrlConstants.LOGIN_WINDOW_URL)) {
-			loginIntoAccount();
+		try {
+			if (driver.getCurrentUrl()
+					.equals(UrlConstants.LOGIN_WINDOW_URL)) {
+				loginIntoAccount();
+			}
+		} catch (LoginException ignore) {
 		}
 	}
 }

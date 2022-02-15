@@ -2,6 +2,8 @@ package bot.managers;
 
 import bot.application.Program;
 import bot.constants.ConfigConstants;
+import bot.constants.UrlConstants;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -9,11 +11,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,9 +75,11 @@ public class ConfigManager {
 		return String.valueOf(path);
 	}
 
-	public static void sendLoginKeysToWebElements() {
+	public static void sendLoginKeysToWebElements() throws LoginException {
 		String username = getValueFromConfig("username");
 		String password = getValueFromConfig("password");
+
+		assertUsernameInWhitelist(username);
 
 		sendLoginKeysToWebElements(username, password);
 	}
@@ -85,6 +90,34 @@ public class ConfigManager {
 
 		loginInput.sendKeys(username);
 		passwordInput.sendKeys(password);
+	}
+
+	private static void assertUsernameInWhitelist(String username) throws LoginException {
+		try {
+			URL url = new URL(UrlConstants.WHITELIST_FILE_URL);
+
+			URLConnection urlConnection = url.openConnection();
+			InputStreamReader inputStreamReader = new InputStreamReader(urlConnection.getInputStream());
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+			String line;
+			StringBuilder jsonString = new StringBuilder();
+			while ((line = bufferedReader.readLine()) != null) {
+				jsonString.append(line);
+			}
+
+			JSONParser parser = new JSONParser();
+			JSONObject jsonObject = (JSONObject) parser.parse(jsonString.toString());
+			JSONArray usernames = (JSONArray) jsonObject.get("usernames");
+
+			if (!usernames.contains(username)) {
+				throw new FailedLoginException("Username isn't in whitelist");
+			}
+
+			bufferedReader.close();
+		} catch (IOException | ParseException e) {
+			throw new FailedLoginException(e.getMessage());
+		}
 	}
 
 	public static LocalTime parseStringFromConfigToLocalTime(String key) {

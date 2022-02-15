@@ -8,6 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import javax.security.auth.login.LoginException;
+
 import static bot.managers.AttendanceManager.loginIntoAccount;
 
 public class Program {
@@ -21,7 +23,7 @@ public class Program {
 
 			loginIntoAccount();
 			processAttendances();
-		} catch (RuntimeException e) {
+		} catch (RuntimeException | LoginException e) {
 			e.printStackTrace();
 		}
 
