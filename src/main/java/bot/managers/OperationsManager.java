@@ -7,9 +7,7 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,7 +46,8 @@ public class OperationsManager {
 	private static boolean compareAttendanceTimes(String startTimeString, String endTimeString) {
 		LocalTime startTime = LocalTime.parse(startTimeString);
 		LocalTime endTime = LocalTime.parse(endTimeString);
-		LocalTime currentTime = LocalTime.now();
+		LocalTime currentTime = ZonedDateTime.now(ZoneId.of("Europe/Kiev"))
+				.toLocalTime();
 
 		return currentTime.compareTo(startTime) > 0 && currentTime.compareTo(endTime) < 0;
 	}

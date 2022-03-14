@@ -7,6 +7,8 @@ import org.openqa.selenium.WebElement;
 
 import javax.security.auth.login.LoginException;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static bot.managers.CollectManager.*;
@@ -25,7 +27,8 @@ public class AttendanceManager {
 		do {
 			checkAttendances();
 			checkAttendances();
-			currentTime = LocalTime.now();
+			currentTime = ZonedDateTime.now(ZoneId.of("Europe/Kiev"))
+					.toLocalTime();
 
 			boolean isLessonNow = checkLessonContinues(currentTime);
 			long timeToSleep = isLessonNow
