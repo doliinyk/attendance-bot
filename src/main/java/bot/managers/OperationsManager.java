@@ -20,10 +20,10 @@ public class OperationsManager {
 
 	public static boolean filterAttendancesFromEvents(WebElement event) {
 		try {
-			WebElement eventIcon = findElementByCssSelector(event, "img.icon");
-			String imageSource = eventIcon.getAttribute("src");
+			WebElement eventDateText = findElementByCssSelector(event, "strong");
 
-			return imageSource.equals(UrlConstants.ATTENDANCE_ICON_URL);
+			return eventDateText.getText()
+					.equals("»");
 		} catch (org.openqa.selenium.NoSuchElementException e) {
 			return false;
 		}
