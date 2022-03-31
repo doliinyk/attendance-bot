@@ -3,21 +3,23 @@ package bot.application;
 import bot.managers.AttendanceManager;
 import bot.managers.ConfigManager;
 import bot.managers.OperationsManager;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 import javax.security.auth.login.LoginException;
 
 import static bot.managers.AttendanceManager.loginIntoAccount;
+import static bot.managers.AttendanceManager.processAttendances;
 
 public class Program {
-	private static WebDriver driver;
+	private static final WebDriver driver = BotWebDriver.getDriver();
 
 	public static void main(String[] args) {
-		initializeWebDriver();
+		initializeAndRunManagers();
 
+		destroyBotWebDriver();
+	}
+
+	private static void initializeAndRunManagers() {
 		try {
 			initializeManagers();
 
@@ -26,16 +28,6 @@ public class Program {
 		} catch (RuntimeException | LoginException e) {
 			e.printStackTrace();
 		}
-
-		destroyWebDriver();
-	}
-
-	private static void initializeWebDriver() {
-		WebDriverManager.chromedriver()
-				.setup();
-
-		ChromeOptions options = new ChromeOptions();
-		driver = new ChromeDriver(options);
 	}
 
 	private static void initializeManagers() throws RuntimeException {
@@ -44,11 +36,7 @@ public class Program {
 		AttendanceManager.initialize(driver);
 	}
 
-	private static void processAttendances() {
-		AttendanceManager.processAttendances();
-	}
-
-	private static void destroyWebDriver() {
-		driver.quit();
+	private static void destroyBotWebDriver() {
+		BotWebDriver.destroyWebDriver();
 	}
 }
