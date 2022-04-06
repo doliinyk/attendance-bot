@@ -1,7 +1,8 @@
 package bot.managers;
 
+import bot.application.BotLogger;
 import bot.application.Program;
-import bot.constants.ConfigConstants;
+import bot.constants.ResourceConstants;
 import bot.constants.UrlConstants;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -41,7 +42,7 @@ public class ConfigManager {
 
 			configJson = (JSONObject) parser.parse(reader);
 		} catch (IOException | ParseException | URISyntaxException e) {
-			e.printStackTrace();
+			BotLogger.error("Failed reading config file");
 		}
 
 		return configJson;
@@ -61,7 +62,7 @@ public class ConfigManager {
 
 	private static String getConfigFilePath() throws URISyntaxException {
 		URL url = Program.class.getClassLoader()
-				.getResource(ConfigConstants.CONFIG_FILE_NAME);
+				.getResource(ResourceConstants.CONFIG_FILE_NAME);
 
 		Path path = Paths.get(Objects.requireNonNull(url)
 				.toURI());
@@ -70,7 +71,7 @@ public class ConfigManager {
 	}
 
 	private static String getLocalFilePath() {
-		Path path = Paths.get(ConfigConstants.CONFIG_FILE_NAME);
+		Path path = Paths.get(ResourceConstants.CONFIG_FILE_NAME);
 
 		return String.valueOf(path);
 	}
@@ -116,6 +117,7 @@ public class ConfigManager {
 
 			bufferedReader.close();
 		} catch (IOException | ParseException e) {
+			BotLogger.error("Failed login: username isn't in whitelist");
 			throw new FailedLoginException(e.getMessage());
 		}
 	}

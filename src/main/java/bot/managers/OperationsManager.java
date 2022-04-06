@@ -1,5 +1,6 @@
 package bot.managers;
 
+import bot.application.BotLogger;
 import bot.constants.LessonsConstants;
 import bot.constants.UrlConstants;
 import org.openqa.selenium.By;

@@ -1,11 +1,14 @@
 package bot.managers;
 
+import bot.application.BotLogger;
+import bot.application.BotNotification;
 import bot.constants.UrlConstants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import javax.security.auth.login.LoginException;
+import java.awt.*;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -16,6 +19,7 @@ import static bot.managers.OperationsManager.*;
 
 public class AttendanceManager {
 	private static WebDriver driver;
+	private static Thread thread = Thread.currentThread();
 
 	public static void initialize(WebDriver driver) {
 		AttendanceManager.driver = driver;
@@ -23,6 +27,7 @@ public class AttendanceManager {
 
 	public static void processAttendances() {
 		LocalTime currentTime;
+		BotLogger.info("Started processing attendances");
 
 		do {
 			checkAttendances();
@@ -35,12 +40,25 @@ public class AttendanceManager {
 					? 300_000
 					: getTimeToLessonStart(currentTime);
 
+			BotLogger.info("Sleeping for " + timeToSleep / 1000 + " seconds " + (isLessonNow
+					? "during lesson"
+					: "to lesson start"));
+			BotNotification.enableExitItem();
+
 			try {
-				Thread.sleep(timeToSleep);
+				thread.sleep(timeToSleep);
 			} catch (InterruptedException | IllegalArgumentException e) {
 				break;
 			}
 		} while (currentTime.compareTo(getLastLessonToday()) < 0);
+
+		if (currentTime.compareTo(getLastLessonToday()) >= 0) {
+			BotLogger.info("Processed all attendances");
+		}
+	}
+
+	public static void interrupt() {
+		thread.interrupt();
 	}
 
 	public static void loginIntoAccount() throws LoginException {
@@ -50,6 +68,9 @@ public class AttendanceManager {
 
 		driver.findElement(By.id("loginbtn"))
 				.click();
+
+		BotLogger.info("Logged into account " + ConfigManager.getValueFromConfig("username")
+				.split("@")[0]);
 	}
 
 	private static void checkAttendances() {
@@ -76,6 +97,10 @@ public class AttendanceManager {
 	private static void checkAttendance(WebElement attendance) {
 		attendance.click();
 
+		String attendanceName = "\"" + findElementByCssSelector("div.page-header-headings>h1").getText() + "\"";
+		String attendanceStatus = "Opening attendance " + attendanceName;
+		BotLogger.info(attendanceStatus);
+
 		WebElement sendAttendanceButton = findElementByCssSelector("td.statuscol.cell.c2.lastcol>a");
 		sendAttendanceButton.click();
 
@@ -84,6 +109,10 @@ public class AttendanceManager {
 
 		WebElement sendSaveButton = findElementByCssSelector("input.btn.btn-primary[value='Зберегти зміни']");
 		sendSaveButton.click();
+
+		attendanceStatus = "Checked attendance " + attendanceName;
+		BotLogger.info(attendanceStatus);
+		BotNotification.sendNotification(attendanceStatus, TrayIcon.MessageType.INFO);
 	}
 
 	private static void returnToMainWindow() {

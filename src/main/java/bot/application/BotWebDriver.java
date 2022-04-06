@@ -1,25 +1,18 @@
 package bot.application;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariDriver;
-import org.openqa.selenium.safari.SafariOptions;
 
 public class BotWebDriver {
 	private static WebDriver driver;
 	private static WebDriverManager webDriverManager;
-	private static MutableCapabilities options;
 
 	static {
-		initializeWebDriver();
-	}
-
-	private static void initializeWebDriver() throws RuntimeException {
 		OperatingSystems operatingSystem = OperatingSystems.getCurrentOperatingSystem();
 
 		setupDriverAndOptions(operatingSystem);
@@ -40,34 +33,38 @@ public class BotWebDriver {
 			default:
 				throw new RuntimeException("Operating system not supported");
 		}
+		BotLogger.info("WebDriver initialized");
 	}
 
 	private static void setupEdgeDriver() {
 		webDriverManager = WebDriverManager.edgedriver();
 		webDriverManager.setup();
 
-		options = new EdgeOptions();
-		driver = new EdgeDriver((EdgeOptions) options);
+		EdgeOptions options = new EdgeOptions();
+		options.addArguments("--headless");
+		driver = new EdgeDriver(options);
 	}
 
 	private static void setupSafariDriver() {
 		webDriverManager = WebDriverManager.safaridriver();
 		webDriverManager.setup();
 
-		options = new SafariOptions();
-		driver = new SafariDriver((SafariOptions) options);
+		driver = new SafariDriver();
 	}
 
 	private static void setupFirefoxDriver() {
 		webDriverManager = WebDriverManager.firefoxdriver();
 		webDriverManager.setup();
 
-		options = new FirefoxOptions();
-		driver = new FirefoxDriver((FirefoxOptions) options);
+		FirefoxOptions options = new FirefoxOptions();
+		options.addArguments("--headless");
+		driver = new FirefoxDriver();
 	}
 
 	public static void destroyWebDriver() {
 		driver.quit();
+
+		BotLogger.info("WebDriver destroyed");
 	}
 
 	public static WebDriver getDriver() {

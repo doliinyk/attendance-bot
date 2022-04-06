@@ -6,6 +6,7 @@ import bot.managers.OperationsManager;
 import org.openqa.selenium.WebDriver;
 
 import javax.security.auth.login.LoginException;
+import java.awt.*;
 
 import static bot.managers.AttendanceManager.loginIntoAccount;
 import static bot.managers.AttendanceManager.processAttendances;
@@ -14,9 +15,13 @@ public class Program {
 	private static final WebDriver driver = BotWebDriver.getDriver();
 
 	public static void main(String[] args) {
-		initializeAndRunManagers();
+		BotLogger.info("Starting bot");
+		BotNotification.sendNotification("Starting bot", TrayIcon.MessageType.INFO);
 
+		initializeAndRunManagers();
 		destroyBotWebDriver();
+
+		BotNotification.destroyTrayIcon();
 	}
 
 	private static void initializeAndRunManagers() {
@@ -25,8 +30,12 @@ public class Program {
 
 			loginIntoAccount();
 			processAttendances();
+
+			BotLogger.info("Shutdown bot");
+			BotNotification.sendNotification("Shutdown bot", TrayIcon.MessageType.INFO);
 		} catch (RuntimeException | LoginException e) {
-			e.printStackTrace();
+			BotLogger.error(e.getMessage());
+			BotNotification.sendNotification("Bot terminated. Error message contains in log", TrayIcon.MessageType.ERROR);
 		}
 	}
 
@@ -34,6 +43,7 @@ public class Program {
 		ConfigManager.initialize(driver);
 		OperationsManager.initialize(driver);
 		AttendanceManager.initialize(driver);
+		BotLogger.info("Managers initialized");
 	}
 
 	private static void destroyBotWebDriver() {
