@@ -55,6 +55,8 @@ public class AttendanceManager {
 		if (currentTime.compareTo(getLastLessonToday()) >= 0) {
 			BotLogger.info("Processed all attendances");
 		}
+
+		logoutFromAccount();
 	}
 
 	public static void interrupt() {
@@ -70,6 +72,14 @@ public class AttendanceManager {
 				.click();
 
 		BotLogger.info("Logged into account " + ConfigManager.getValueFromConfig("username")
+				.split("@")[0]);
+	}
+
+	public static void logoutFromAccount() {
+		driver.findElement(By.cssSelector("div[data-title='logout,moodle']"))
+				.click();
+
+		BotLogger.info("Logged out from account " + ConfigManager.getValueFromConfig("username")
 				.split("@")[0]);
 	}
 

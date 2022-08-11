@@ -6,7 +6,7 @@
 
     <groupId>bot</groupId>
     <artifactId>attendance-bot</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <modules>
         <module>bot</module>
     </modules>
@@ -22,41 +22,35 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.2.1</version>
+            <version>4.3.0</version>
         </dependency>
-
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>5.2.0</version>
+            <version>5.2.1</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
             <version>3.3.0</version>
             <type>maven-plugin</type>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.36</version>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.36</version>
         </dependency>
-
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -75,7 +69,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>

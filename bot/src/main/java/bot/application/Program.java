@@ -8,8 +8,7 @@ import org.openqa.selenium.WebDriver;
 import javax.security.auth.login.LoginException;
 import java.awt.*;
 
-import static bot.managers.AttendanceManager.loginIntoAccount;
-import static bot.managers.AttendanceManager.processAttendances;
+import static bot.managers.AttendanceManager.*;
 
 public class Program {
 	private static final WebDriver driver = BotWebDriver.getDriver();
