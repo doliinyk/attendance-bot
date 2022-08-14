@@ -1,22 +1,19 @@
-package bot.managers;
+package ods.attendancebot.handlers;
 
-import bot.application.BotLogger;
-import bot.constants.LessonsConstants;
-import bot.constants.UrlConstants;
+import ods.attendancebot.constants.LessonConstants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.time.*;
-import java.util.Arrays;
 import java.util.List;
 
-public class OperationsManager {
+public class OperationHandler {
 	private static WebDriver driver;
 
 	public static void initialize(WebDriver driver) {
-		OperationsManager.driver = driver;
+		OperationHandler.driver = driver;
 	}
 
 	public static boolean filterAttendancesFromEvents(WebElement event) {
@@ -75,63 +72,62 @@ public class OperationsManager {
 		return foundElement;
 	}
 
-	public static boolean checkLessonContinues(LocalTime currentTime) {
-		return (currentTime.compareTo(LessonsConstants.FIRST_LESSON_START) > 0 && currentTime.compareTo(LessonsConstants.FIRST_LESSON_END) < 0) || (currentTime.compareTo(LessonsConstants.SECOND_LESSON_START) > 0 && currentTime.compareTo(LessonsConstants.SECOND_LESSON_END) < 0) || (currentTime.compareTo(LessonsConstants.THIRD_LESSON_START) > 0 && currentTime.compareTo(LessonsConstants.THIRD_LESSON_END) < 0) || (currentTime.compareTo(LessonsConstants.FOURTH_LESSON_START) > 0 && currentTime.compareTo(LessonsConstants.FOURTH_LESSON_END) < 0);
+	public static boolean checkLessonsContinues(LocalTime currentTime) {
+		return currentTime.compareTo(getTimeWhenLessonsStart()) >= 0 && currentTime.compareTo(getTimeWhenLessonsEnd()) <= 0;
 	}
 
-	public static long getTimeToLessonStart(LocalTime currentTime) {
-		long[] durations = {
-				Duration.between(currentTime, LessonsConstants.FIRST_LESSON_START).toMillis(),
-				Duration.between(currentTime, LessonsConstants.SECOND_LESSON_START).toMillis(),
-				Duration.between(currentTime, LessonsConstants.THIRD_LESSON_START).toMillis(),
-				Duration.between(currentTime, LessonsConstants.FOURTH_LESSON_START).toMillis()
-		};
+	public static long getTimeToLessonsStart(LocalTime currentTime) {
+		long duration = Duration.between(currentTime, getTimeWhenLessonsStart())
+				.toMillis();
 
-		long minimalDuration;
-		minimalDuration = Arrays.stream(durations)
-				.limit(getLessonsAmountToday())
-				.filter(d -> d >= 0)
-				.min()
-				.orElse(-1);
-
-		return minimalDuration;
+		return duration >= 0
+				? duration
+				: 0;
 	}
 
-	public static LocalTime getLastLessonToday() {
-		int lessonsAmountToday = getLessonsAmountToday();
-
-		switch (lessonsAmountToday) {
-			case 1:
-				return LessonsConstants.FIRST_LESSON_END;
-			case 2:
-				return LessonsConstants.SECOND_LESSON_END;
-			case 3:
-				return LessonsConstants.THIRD_LESSON_END;
-			case 4:
-				return LessonsConstants.FOURTH_LESSON_END;
-			default:
-				return LocalTime.of(0, 0);
-		}
-	}
-
-	private static int getLessonsAmountToday() {
+	public static LocalTime getTimeWhenLessonsStart() {
 		String currentDay = LocalDate.now()
 				.getDayOfWeek()
 				.toString();
 
 		switch (currentDay) {
 			case "MONDAY":
-				return LessonsConstants.MONDAY_LESSONS_AMOUNT;
+				return LessonConstants.MONDAY_LESSONS_START;
 			case "TUESDAY":
-				return LessonsConstants.TUESDAY_LESSONS_AMOUNT;
+				return LessonConstants.TUESDAY_LESSONS_START;
 			case "WEDNESDAY":
-				return LessonsConstants.WEDNESDAY_LESSONS_AMOUNT;
+				return LessonConstants.WEDNESDAY_LESSONS_START;
 			case "THURSDAY":
-				return LessonsConstants.THURSDAY_LESSONS_AMOUNT;
+				return LessonConstants.THURSDAY_LESSONS_START;
 			case "FRIDAY":
-				return LessonsConstants.FRIDAY_LESSONS_AMOUNT;
+				return LessonConstants.FRIDAY_LESSONS_START;
+			case "SATURDAY":
+				return LessonConstants.SATURDAY_LESSONS_START;
 			default:
-				return 0;
+				return LocalTime.of(0, 0);
+		}
+	}
+
+	public static LocalTime getTimeWhenLessonsEnd() {
+		String currentDay = LocalDate.now()
+				.getDayOfWeek()
+				.toString();
+
+		switch (currentDay) {
+			case "MONDAY":
+				return LessonConstants.MONDAY_LESSONS_END;
+			case "TUESDAY":
+				return LessonConstants.TUESDAY_LESSONS_END;
+			case "WEDNESDAY":
+				return LessonConstants.WEDNESDAY_LESSONS_END;
+			case "THURSDAY":
+				return LessonConstants.THURSDAY_LESSONS_END;
+			case "FRIDAY":
+				return LessonConstants.FRIDAY_LESSONS_END;
+			case "SATURDAY":
+				return LessonConstants.SATURDAY_LESSONS_END;
+			default:
+				return LocalTime.of(0, 0);
 		}
 	}
 }

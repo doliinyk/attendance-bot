@@ -1,11 +1,14 @@
-package bot.application;
+package ods.attendancebot.utils;
 
-import bot.constants.ResourceConstants;
-import bot.managers.AttendanceManager;
+import ods.attendancebot.Program;
+import ods.attendancebot.constants.ResourceConstants;
+import ods.attendancebot.handlers.AttendanceHandler;
 
 import java.awt.*;
 import java.awt.TrayIcon.MessageType;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 
 public class BotNotification {
 	private static final SystemTray systemTray = SystemTray.getSystemTray();
@@ -32,14 +35,26 @@ public class BotNotification {
 
 	private static void createMenu() {
 		PopupMenu popupMenu = new PopupMenu();
+		MenuItem logItem = new MenuItem("Show log");
 		exitItem = new MenuItem("Shutdown");
 
+		logItem.addActionListener(e -> {
+			try {
+				Desktop.getDesktop()
+						.open(Paths.get("attendance-bot.log")
+								.toFile());
+			} catch (IOException ex) {
+				BotLogger.error(ex.getMessage());
+			}
+		});
 		exitItem.addActionListener(e -> {
 			BotLogger.info("Bot closed via tray icon");
-			AttendanceManager.interrupt();
+			AttendanceHandler.interrupt();
 		});
+
 		exitItem.setEnabled(false);
 
+		popupMenu.add(logItem);
 		popupMenu.add(exitItem);
 		trayIcon.setPopupMenu(popupMenu);
 	}

@@ -1,4 +1,4 @@
-package bot.application;
+package ods.attendancebot.utils;
 
 public enum OperatingSystems {
 	WINDOWS,

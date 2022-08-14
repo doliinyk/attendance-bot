@@ -1,8 +1,8 @@
-package bot.managers;
+package ods.attendancebot.handlers;
 
-import bot.application.BotLogger;
-import bot.application.BotNotification;
-import bot.constants.UrlConstants;
+import ods.attendancebot.constants.UrlConstants;
+import ods.attendancebot.utils.BotLogger;
+import ods.attendancebot.utils.BotNotification;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -14,35 +14,35 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static bot.managers.CollectManager.*;
-import static bot.managers.OperationsManager.*;
+import static ods.attendancebot.handlers.CollectHandler.*;
+import static ods.attendancebot.handlers.OperationHandler.*;
 
-public class AttendanceManager {
+public class AttendanceHandler {
 	private static WebDriver driver;
-	private static Thread thread = Thread.currentThread();
+	private static final Thread thread = Thread.currentThread();
+	private static int attendancesProcessed = 0;
 
 	public static void initialize(WebDriver driver) {
-		AttendanceManager.driver = driver;
+		AttendanceHandler.driver = driver;
 	}
 
-	public static void processAttendances() {
+	public static void handleAttendances() {
 		LocalTime currentTime;
-		BotLogger.info("Started processing attendances");
+		BotLogger.info("Started handling attendances");
 
 		do {
-			checkAttendances();
 			checkAttendances();
 			currentTime = ZonedDateTime.now(ZoneId.of("Europe/Kiev"))
 					.toLocalTime();
 
-			boolean isLessonNow = checkLessonContinues(currentTime);
-			long timeToSleep = isLessonNow
-					? 300_000
-					: getTimeToLessonStart(currentTime);
+			boolean isLessonsNow = checkLessonsContinues(currentTime);
+			long timeToSleep = isLessonsNow
+					? 180_000
+					: getTimeToLessonsStart(currentTime);
 
-			BotLogger.info("Sleeping for " + timeToSleep / 1000 + " seconds " + (isLessonNow
-					? "during lesson"
-					: "to lesson start"));
+			BotLogger.info("Sleeping for " + timeToSleep / 1000 + " seconds " + (isLessonsNow
+					? "during lessons"
+					: "to lessons start"));
 			BotNotification.enableExitItem();
 
 			try {
@@ -50,11 +50,10 @@ public class AttendanceManager {
 			} catch (InterruptedException | IllegalArgumentException e) {
 				break;
 			}
-		} while (currentTime.compareTo(getLastLessonToday()) < 0);
+		} while (currentTime.compareTo(getTimeWhenLessonsEnd()) < 0);
 
-		if (currentTime.compareTo(getLastLessonToday()) >= 0) {
-			BotLogger.info("Processed all attendances");
-		}
+		BotLogger.info("Handled " + attendancesProcessed + " attendances");
+		logoutFromAccount();
 	}
 
 	public static void interrupt() {
@@ -64,21 +63,33 @@ public class AttendanceManager {
 	public static void loginIntoAccount() throws LoginException {
 		driver.get(UrlConstants.LOGIN_WINDOW_URL);
 
-		ConfigManager.sendLoginKeysToWebElements();
+		ConfigHandler.sendLoginKeysToWebElements();
 
 		driver.findElement(By.id("loginbtn"))
 				.click();
 
-		BotLogger.info("Logged into account " + ConfigManager.getValueFromConfig("username")
+		BotLogger.info("Logged into account " + ConfigHandler.getValueFromConfig("username")
+				.split("@")[0]);
+	}
+
+	public static void logoutFromAccount() {
+		String sessionKey = driver.findElement(By.cssSelector("input[type='hidden'][name='sesskey']"))
+				.getAttribute("value");
+		driver.navigate()
+				.to(UrlConstants.LOGOUT_WINDOW_URL(sessionKey));
+
+		BotLogger.info("Logged out from account " + ConfigHandler.getValueFromConfig("username")
 				.split("@")[0]);
 	}
 
 	private static void checkAttendances() {
-		List<WebElement> events = collectEventsFromMainWindow();
-		List<String> eventUrls = collectUrlsFromEvents(events);
+		for (int i = 0; i < 2; i++) {
+			List<WebElement> events = collectEventsFromMainWindow();
+			List<String> eventUrls = collectUrlsFromEvents(events);
 
-		eventUrls.forEach(AttendanceManager::checkEvent);
-		returnToMainWindow();
+			eventUrls.forEach(AttendanceHandler::checkEvent);
+			returnToMainWindow();
+		}
 	}
 
 	private static void checkEvent(String eventUrl) {
@@ -88,7 +99,7 @@ public class AttendanceManager {
 
 			List<WebElement> attendances = collectAttendancesFromEventWindow();
 
-			attendances.forEach(AttendanceManager::checkAttendance);
+			attendances.forEach(AttendanceHandler::checkAttendance);
 		} catch (org.openqa.selenium.NoSuchElementException ignored) {
 			returnToMainWindow();
 		}
@@ -110,7 +121,7 @@ public class AttendanceManager {
 		WebElement sendSaveButton = findElementByCssSelector("input.btn.btn-primary[value='Зберегти зміни']");
 		sendSaveButton.click();
 
-		attendanceStatus = "Checked attendance " + attendanceName;
+		attendanceStatus = "Checked " + ++attendancesProcessed + " attendance of " + attendanceName;
 		BotLogger.info(attendanceStatus);
 		BotNotification.sendNotification(attendanceStatus, TrayIcon.MessageType.INFO);
 	}

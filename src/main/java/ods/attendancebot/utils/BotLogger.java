@@ -1,9 +1,9 @@
-package bot.application;
+package ods.attendancebot.utils;
 
 import org.apache.log4j.Logger;
 
 public class BotLogger {
-	private static final Logger logger = Logger.getLogger(Program.class);
+	private static final Logger logger = Logger.getLogger(BotLogger.class);
 
 	public static void info(String message) {
 		logger.info(message);

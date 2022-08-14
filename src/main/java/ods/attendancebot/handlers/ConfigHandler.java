@@ -1,9 +1,9 @@
-package bot.managers;
+package ods.attendancebot.handlers;
 
-import bot.application.BotLogger;
-import bot.application.Program;
-import bot.constants.ResourceConstants;
-import bot.constants.UrlConstants;
+import ods.attendancebot.Program;
+import ods.attendancebot.constants.ResourceConstants;
+import ods.attendancebot.constants.UrlConstants;
+import ods.attendancebot.utils.BotLogger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -18,31 +18,32 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.util.Objects;
 
-public class ConfigManager {
+public class ConfigHandler {
 	private static WebDriver driver;
 	private static JSONObject configJson;
 
-	public static void initialize(WebDriver driver) throws RuntimeException {
-		ConfigManager.driver = driver;
+	public static void initialize(WebDriver driver) throws RuntimeException, FileNotFoundException {
+		ConfigHandler.driver = driver;
 
 		configJson = getJsonObjectFromConfig();
 	}
 
-	private static JSONObject getJsonObjectFromConfig() throws RuntimeException {
-		JSONObject configJson = null;
+	private static JSONObject getJsonObjectFromConfig() throws FileNotFoundException {
+		JSONObject configJson;
 
 		try (FileReader reader = getConfigFileReader()) {
 			JSONParser parser = new JSONParser();
 
 			configJson = (JSONObject) parser.parse(reader);
+		} catch (NullPointerException | FileNotFoundException e) {
+			throw new FileNotFoundException("Config file not found");
 		} catch (IOException | ParseException | URISyntaxException e) {
-			BotLogger.error("Failed reading config file");
+			throw new RuntimeException("Failed reading config file");
 		}
 
 		return configJson;
@@ -53,14 +54,14 @@ public class ConfigManager {
 
 		try {
 			fileReader = new FileReader(getConfigFilePath());
-		} catch (FileSystemNotFoundException ignore) {
+		} catch (NullPointerException | FileNotFoundException ignore) {
 			fileReader = new FileReader(getLocalFilePath());
 		}
 
 		return fileReader;
 	}
 
-	private static String getConfigFilePath() throws URISyntaxException {
+	private static String getConfigFilePath() throws URISyntaxException, NullPointerException {
 		URL url = Program.class.getClassLoader()
 				.getResource(ResourceConstants.CONFIG_FILE_NAME);
 
@@ -112,12 +113,12 @@ public class ConfigManager {
 			JSONArray usernames = (JSONArray) jsonObject.get("usernames");
 
 			if (!usernames.contains(username)) {
-				throw new FailedLoginException("Username isn't in whitelist");
+				throw new FailedLoginException("Username " + username + " isn't in whitelist");
 			}
 
 			bufferedReader.close();
 		} catch (IOException | ParseException e) {
-			BotLogger.error("Failed login: username isn't in whitelist");
+			BotLogger.error("Failed asserting username in whitelist");
 			throw new FailedLoginException(e.getMessage());
 		}
 	}
@@ -127,11 +128,11 @@ public class ConfigManager {
 				.plusSeconds(30);
 	}
 
-	public static int parseStringFromConfigToInt(String key) {
-		return Integer.parseInt(getValueFromConfig(key));
-	}
-
 	public static String getValueFromConfig(String key) {
 		return (String) configJson.get(key);
+	}
+
+	public static boolean containsKeyInConfig(String key) {
+		return configJson.containsKey(key);
 	}
 }

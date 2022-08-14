@@ -1,4 +1,4 @@
-package bot.constants;
+package ods.attendancebot.constants;
 
 public class ResourceConstants {
 	public static final String CONFIG_FILE_NAME = "config.json";
