@@ -1,7 +1,8 @@
-package bot.application;
+package ods.attendancebot.utils;
 
-import bot.constants.ResourceConstants;
-import bot.managers.AttendanceManager;
+import ods.attendancebot.Program;
+import ods.attendancebot.constants.ResourceConstants;
+import ods.attendancebot.handlers.AttendanceHandler;
 
 import java.awt.*;
 import java.awt.TrayIcon.MessageType;
@@ -48,7 +49,7 @@ public class BotNotification {
 		});
 		exitItem.addActionListener(e -> {
 			BotLogger.info("Bot closed via tray icon");
-			AttendanceManager.interrupt();
+			AttendanceHandler.interrupt();
 		});
 
 		exitItem.setEnabled(false);

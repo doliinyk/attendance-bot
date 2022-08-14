@@ -6,11 +6,8 @@
 
     <groupId>bot</groupId>
     <artifactId>attendance-bot</artifactId>
-    <version>1.0</version>
-    <modules>
-        <module>bot</module>
-    </modules>
-    <packaging>pom</packaging>
+    <version>0.5</version>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -27,7 +24,7 @@
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>5.2.1</version>
+            <version>5.2.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -38,8 +35,13 @@
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
-            <version>3.3.0</version>
+            <version>3.4.2</version>
             <type>maven-plugin</type>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -50,11 +52,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.36</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
         </dependency>
     </dependencies>
 
@@ -79,7 +76,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>bot.application.Program</mainClass>
+                            <mainClass>ods.attendancebot.Program</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

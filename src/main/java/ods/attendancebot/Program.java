@@ -1,14 +1,16 @@
-package bot.application;
+package ods.attendancebot;
 
-import bot.managers.AttendanceManager;
-import bot.managers.ConfigManager;
-import bot.managers.OperationsManager;
+import ods.attendancebot.handlers.AttendanceHandler;
+import ods.attendancebot.handlers.ConfigHandler;
+import ods.attendancebot.handlers.OperationHandler;
+import ods.attendancebot.utils.BotLogger;
+import ods.attendancebot.utils.BotNotification;
+import ods.attendancebot.utils.BotWebDriver;
 import org.openqa.selenium.WebDriver;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
-
-import static bot.managers.AttendanceManager.*;
+import java.io.FileNotFoundException;
 
 public class Program {
 	private static final WebDriver driver = BotWebDriver.getDriver();
@@ -27,21 +29,21 @@ public class Program {
 		try {
 			initializeManagers();
 
-			loginIntoAccount();
-			processAttendances();
+			AttendanceHandler.loginIntoAccount();
+			AttendanceHandler.handleAttendances();
 
 			BotLogger.info("Shutdown bot");
 			BotNotification.sendNotification("Shutdown bot", TrayIcon.MessageType.INFO);
-		} catch (RuntimeException | LoginException e) {
+		} catch (RuntimeException | LoginException | FileNotFoundException e) {
 			BotLogger.error(e.getMessage());
 			BotNotification.sendNotification("Bot terminated. Error message contains in log", TrayIcon.MessageType.ERROR);
 		}
 	}
 
-	private static void initializeManagers() throws RuntimeException {
-		ConfigManager.initialize(driver);
-		OperationsManager.initialize(driver);
-		AttendanceManager.initialize(driver);
+	private static void initializeManagers() throws RuntimeException, FileNotFoundException {
+		ConfigHandler.initialize(driver);
+		OperationHandler.initialize(driver);
+		AttendanceHandler.initialize(driver);
 		BotLogger.info("Managers initialized");
 	}
 
