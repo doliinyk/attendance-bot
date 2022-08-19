@@ -4,6 +4,7 @@ import ods.attendancebot.constants.UrlConstants;
 import ods.attendancebot.utils.BotLogger;
 import ods.attendancebot.utils.BotNotification;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -15,7 +16,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static ods.attendancebot.handlers.CollectHandler.*;
-import static ods.attendancebot.handlers.OperationHandler.*;
+import static ods.attendancebot.handlers.TimeEventHandler.*;
 
 public class AttendanceHandler {
 	private static WebDriver driver;
@@ -27,28 +28,30 @@ public class AttendanceHandler {
 	}
 
 	public static void handleAttendances() {
-		LocalTime currentTime;
+		LocalTime currentTime = ZonedDateTime.now(ZoneId.of("Europe/Kiev"))
+				.toLocalTime();
 		BotLogger.info("Started handling attendances");
 
 		do {
-			checkAttendances();
-			currentTime = ZonedDateTime.now(ZoneId.of("Europe/Kiev"))
-					.toLocalTime();
-
-			boolean isLessonsNow = checkLessonsContinues(currentTime);
-			long timeToSleep = isLessonsNow
-					? 180_000
-					: getTimeToLessonsStart(currentTime);
-
-			BotLogger.info("Sleeping for " + timeToSleep / 1000 + " seconds " + (isLessonsNow
-					? "during lessons"
-					: "to lessons start"));
-			BotNotification.enableExitItem();
-
 			try {
+				checkAttendances();
+				currentTime = ZonedDateTime.now(ZoneId.of("Europe/Kiev"))
+						.toLocalTime();
+
+				boolean isLessonsNow = checkLessonsContinues(currentTime);
+				long timeToSleep = isLessonsNow
+						? 180_000
+						: getTimeToLessonsStart(currentTime);
+
+				BotLogger.info("Sleeping for " + timeToSleep / 1000 + " seconds " + (isLessonsNow
+						? "during lessons"
+						: "to lessons start"));
+				BotNotification.enableExitItem();
+
 				thread.sleep(timeToSleep);
 			} catch (InterruptedException | IllegalArgumentException e) {
 				break;
+			} catch (StaleElementReferenceException ignore) {
 			}
 		} while (currentTime.compareTo(getTimeWhenLessonsEnd()) < 0);
 

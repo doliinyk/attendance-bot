@@ -9,11 +9,11 @@ import org.openqa.selenium.WebElement;
 import java.time.*;
 import java.util.List;
 
-public class OperationHandler {
+public class TimeEventHandler {
 	private static WebDriver driver;
 
 	public static void initialize(WebDriver driver) {
-		OperationHandler.driver = driver;
+		TimeEventHandler.driver = driver;
 	}
 
 	public static boolean filterAttendancesFromEvents(WebElement event) {

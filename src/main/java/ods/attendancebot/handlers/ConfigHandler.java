@@ -1,6 +1,6 @@
 package ods.attendancebot.handlers;
 
-import ods.attendancebot.Program;
+import ods.attendancebot.AttendanceBot;
 import ods.attendancebot.constants.ResourceConstants;
 import ods.attendancebot.constants.UrlConstants;
 import ods.attendancebot.utils.BotLogger;
@@ -62,7 +62,7 @@ public class ConfigHandler {
 	}
 
 	private static String getConfigFilePath() throws URISyntaxException, NullPointerException {
-		URL url = Program.class.getClassLoader()
+		URL url = AttendanceBot.class.getClassLoader()
 				.getResource(ResourceConstants.CONFIG_FILE_NAME);
 
 		Path path = Paths.get(Objects.requireNonNull(url)

@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: ods.attendancebot.Program
+Main-Class: ods.attendancebot.AttendanceBot
 

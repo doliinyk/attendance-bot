@@ -6,7 +6,7 @@
 
     <groupId>bot</groupId>
     <artifactId>attendance-bot</artifactId>
-    <version>0.5</version>
+    <version>0.5.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -76,7 +76,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ods.attendancebot.Program</mainClass>
+                            <mainClass>ods.attendancebot.AttendanceBot</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

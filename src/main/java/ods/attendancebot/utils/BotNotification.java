@@ -1,6 +1,6 @@
 package ods.attendancebot.utils;
 
-import ods.attendancebot.Program;
+import ods.attendancebot.AttendanceBot;
 import ods.attendancebot.constants.ResourceConstants;
 import ods.attendancebot.handlers.AttendanceHandler;
 
@@ -18,7 +18,7 @@ public class BotNotification {
 	static {
 		if (SystemTray.isSupported()) {
 			try {
-				URL url = Program.class.getClassLoader()
+				URL url = AttendanceBot.class.getClassLoader()
 						.getResource(ResourceConstants.IMAGE_FILE_NAME);
 				Image image = Toolkit.getDefaultToolkit()
 						.getImage(url);
@@ -38,13 +38,13 @@ public class BotNotification {
 		MenuItem logItem = new MenuItem("Show log");
 		exitItem = new MenuItem("Shutdown");
 
-		logItem.addActionListener(e -> {
+		logItem.addActionListener(event -> {
 			try {
 				Desktop.getDesktop()
 						.open(Paths.get("attendance-bot.log")
 								.toFile());
-			} catch (IOException ex) {
-				BotLogger.error(ex.getMessage());
+			} catch (IOException e) {
+				BotLogger.error(e.getMessage());
 			}
 		});
 		exitItem.addActionListener(e -> {
@@ -60,7 +60,7 @@ public class BotNotification {
 	}
 
 	public static void enableExitItem() {
-		if (!exitItem.isEnabled()) {
+		if (SystemTray.isSupported() && !exitItem.isEnabled()) {
 			exitItem.setEnabled(true);
 		}
 	}
@@ -72,12 +72,14 @@ public class BotNotification {
 	}
 
 	public static void destroyTrayIcon() {
-		try {
-			Thread.sleep(2500);
-		} catch (InterruptedException e) {
-			BotLogger.error(e.getMessage());
-		}
+		if (SystemTray.isSupported()) {
+			try {
+				Thread.sleep(2500);
+			} catch (InterruptedException e) {
+				BotLogger.error(e.getMessage());
+			}
 
-		systemTray.remove(trayIcon);
+			systemTray.remove(trayIcon);
+		}
 	}
 }
