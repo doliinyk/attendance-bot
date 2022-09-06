@@ -6,7 +6,7 @@
 
     <groupId>bot</groupId>
     <artifactId>attendance-bot</artifactId>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -19,12 +19,12 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.3.0</version>
+            <version>4.4.0</version>
         </dependency>
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>5.2.3</version>
+            <version>5.3.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -46,12 +46,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.0</version>
         </dependency>
     </dependencies>
 

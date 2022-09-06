@@ -4,7 +4,6 @@ import ods.attendancebot.constants.UrlConstants;
 import ods.attendancebot.utils.BotLogger;
 import ods.attendancebot.utils.BotNotification;
 import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -28,30 +27,30 @@ public class AttendanceHandler {
 	}
 
 	public static void handleAttendances() {
-		LocalTime currentTime = ZonedDateTime.now(ZoneId.of("Europe/Kiev"))
-				.toLocalTime();
+		LocalTime currentTime;
 		BotLogger.info("Started handling attendances");
 
 		do {
+			driver.navigate()
+					.refresh();
+			checkAttendances();
+			currentTime = ZonedDateTime.now(ZoneId.of("Europe/Kiev"))
+					.toLocalTime();
+
+			boolean isLessonsNow = checkLessonsContinues(currentTime);
+			long timeToSleep = isLessonsNow
+					? 180_000
+					: getTimeToLessonsStart(currentTime);
+
+			BotLogger.info("Sleeping for " + timeToSleep / 1000 + " seconds " + (isLessonsNow
+					? "during lessons"
+					: "to lessons start"));
+			BotNotification.enableExitItem();
+
 			try {
-				checkAttendances();
-				currentTime = ZonedDateTime.now(ZoneId.of("Europe/Kiev"))
-						.toLocalTime();
-
-				boolean isLessonsNow = checkLessonsContinues(currentTime);
-				long timeToSleep = isLessonsNow
-						? 180_000
-						: getTimeToLessonsStart(currentTime);
-
-				BotLogger.info("Sleeping for " + timeToSleep / 1000 + " seconds " + (isLessonsNow
-						? "during lessons"
-						: "to lessons start"));
-				BotNotification.enableExitItem();
-
 				thread.sleep(timeToSleep);
 			} catch (InterruptedException | IllegalArgumentException e) {
 				break;
-			} catch (StaleElementReferenceException ignore) {
 			}
 		} while (currentTime.compareTo(getTimeWhenLessonsEnd()) < 0);
 
