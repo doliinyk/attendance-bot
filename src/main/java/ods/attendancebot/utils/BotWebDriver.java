@@ -8,17 +8,19 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariDriver;
 
+import java.util.Arrays;
+
 public class BotWebDriver {
 	private static WebDriver driver;
 	private static WebDriverManager webDriverManager;
+	private static boolean isHidden = true;
 
-	static {
+	public static void setupDriverAndOptions(String[] args) {
 		OperatingSystems operatingSystem = OperatingSystems.getCurrentOperatingSystem();
-
-		setupDriverAndOptions(operatingSystem);
-	}
-
-	private static void setupDriverAndOptions(OperatingSystems operatingSystem) {
+		if (Arrays.asList(args)
+				.contains("visible")) {
+			isHidden = false;
+		}
 		switch (operatingSystem) {
 			case WINDOWS:
 				setupEdgeDriver();
@@ -41,7 +43,10 @@ public class BotWebDriver {
 		webDriverManager.setup();
 
 		EdgeOptions options = new EdgeOptions();
-		options.addArguments("--headless");
+		if (isHidden) {
+			options.addArguments("--headless");
+		}
+
 		driver = new EdgeDriver(options);
 	}
 
@@ -57,7 +62,10 @@ public class BotWebDriver {
 		webDriverManager.setup();
 
 		FirefoxOptions options = new FirefoxOptions();
-		options.addArguments("--headless");
+		if (isHidden) {
+			options.addArguments("--headless");
+		}
+
 		driver = new FirefoxDriver();
 	}
 

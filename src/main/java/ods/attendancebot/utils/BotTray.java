@@ -9,13 +9,15 @@ import java.awt.TrayIcon.MessageType;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
-public class BotNotification {
+public class BotTray {
 	private static final SystemTray systemTray = SystemTray.getSystemTray();
 	private static TrayIcon trayIcon;
 	private static MenuItem exitItem;
+	private static boolean isNotified;
 
-	static {
+	public static void setupTray(String[] args) {
 		if (SystemTray.isSupported()) {
 			try {
 				URL url = AttendanceBot.class.getClassLoader()
@@ -28,6 +30,9 @@ public class BotNotification {
 
 				createMenu();
 				systemTray.add(trayIcon);
+
+				isNotified = !Arrays.asList(args)
+						.contains("silent");
 			} catch (AWTException ignore) {
 			}
 		}
@@ -66,7 +71,7 @@ public class BotNotification {
 	}
 
 	public static void sendNotification(String text, MessageType messageType) {
-		if (SystemTray.isSupported()) {
+		if (SystemTray.isSupported() && isNotified) {
 			trayIcon.displayMessage("Attendance bot", text, messageType);
 		}
 	}

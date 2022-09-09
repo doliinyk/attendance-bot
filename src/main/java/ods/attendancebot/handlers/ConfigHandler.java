@@ -18,6 +18,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalTime;
@@ -54,7 +55,7 @@ public class ConfigHandler {
 
 		try {
 			fileReader = new FileReader(getConfigFilePath());
-		} catch (NullPointerException | FileNotFoundException ignore) {
+		} catch (NullPointerException | FileNotFoundException | FileSystemNotFoundException ignore) {
 			fileReader = new FileReader(getLocalFilePath());
 		}
 

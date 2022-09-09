@@ -2,7 +2,7 @@ package ods.attendancebot.handlers;
 
 import ods.attendancebot.constants.UrlConstants;
 import ods.attendancebot.utils.BotLogger;
-import ods.attendancebot.utils.BotNotification;
+import ods.attendancebot.utils.BotTray;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -45,7 +45,7 @@ public class AttendanceHandler {
 			BotLogger.info("Sleeping for " + timeToSleep / 1000 + " seconds " + (isLessonsNow
 					? "during lessons"
 					: "to lessons start"));
-			BotNotification.enableExitItem();
+			BotTray.enableExitItem();
 
 			try {
 				thread.sleep(timeToSleep);
@@ -125,7 +125,7 @@ public class AttendanceHandler {
 
 		attendanceStatus = "Checked " + ++attendancesProcessed + " attendance of " + attendanceName;
 		BotLogger.info(attendanceStatus);
-		BotNotification.sendNotification(attendanceStatus, TrayIcon.MessageType.INFO);
+		BotTray.sendNotification(attendanceStatus, TrayIcon.MessageType.INFO);
 	}
 
 	private static void returnToMainWindow() {
