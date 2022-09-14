@@ -5,7 +5,7 @@ import ods.attendancebot.handlers.ConfigHandler;
 import ods.attendancebot.handlers.TimeEventHandler;
 import ods.attendancebot.utils.BotLogger;
 import ods.attendancebot.utils.BotTray;
-import ods.attendancebot.utils.BotWebDriver;
+import ods.attendancebot.utils.BotDriver;
 import org.openqa.selenium.WebDriver;
 
 import javax.security.auth.login.LoginException;
@@ -14,20 +14,13 @@ import java.io.FileNotFoundException;
 
 public class AttendanceBot {
 	public static void main(String[] args) {
-		setupDriverAndNotifications(args);
+		BotLogger.info("Starting bot");
+		BotTray.sendNotification("Starting bot", TrayIcon.MessageType.INFO);
 
 		initializeAndRunManagers();
 		destroyDriver();
 
 		BotTray.destroyTrayIcon();
-	}
-
-	private static void setupDriverAndNotifications(String[] args) {
-		BotWebDriver.setupDriverAndOptions(args);
-		BotTray.setupTray(args);
-
-		BotLogger.info("Starting bot");
-		BotTray.sendNotification("Starting bot", TrayIcon.MessageType.INFO);
 	}
 
 	private static void initializeAndRunManagers() {
@@ -46,7 +39,7 @@ public class AttendanceBot {
 	}
 
 	private static void initializeManagers() throws RuntimeException, FileNotFoundException {
-		WebDriver driver = BotWebDriver.getDriver();
+		WebDriver driver = BotDriver.getDriver();
 
 		ConfigHandler.initialize(driver);
 		TimeEventHandler.initialize(driver);
@@ -55,6 +48,6 @@ public class AttendanceBot {
 	}
 
 	private static void destroyDriver() {
-		BotWebDriver.destroyWebDriver();
+		BotDriver.destroyWebDriver();
 	}
 }

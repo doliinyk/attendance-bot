@@ -4,6 +4,7 @@ import ods.attendancebot.constants.UrlConstants;
 import ods.attendancebot.utils.BotLogger;
 import ods.attendancebot.utils.BotTray;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -31,8 +32,6 @@ public class AttendanceHandler {
 		BotLogger.info("Started handling attendances");
 
 		do {
-			driver.navigate()
-					.refresh();
 			checkAttendances();
 			currentTime = ZonedDateTime.now(ZoneId.of("Europe/Kiev"))
 					.toLocalTime();
@@ -66,7 +65,6 @@ public class AttendanceHandler {
 		driver.get(UrlConstants.LOGIN_WINDOW_URL);
 
 		ConfigHandler.sendLoginKeysToWebElements();
-
 		driver.findElement(By.id("loginbtn"))
 				.click();
 
@@ -102,7 +100,7 @@ public class AttendanceHandler {
 			List<WebElement> attendances = collectAttendancesFromEventWindow();
 
 			attendances.forEach(AttendanceHandler::checkAttendance);
-		} catch (org.openqa.selenium.NoSuchElementException ignored) {
+		} catch (NoSuchElementException ignore) {
 			returnToMainWindow();
 		}
 	}

@@ -8,19 +8,17 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariDriver;
 
-import java.util.Arrays;
-
-public class BotWebDriver {
+public class BotDriver {
 	private static WebDriver driver;
 	private static WebDriverManager webDriverManager;
-	private static boolean isHidden = true;
 
-	public static void setupDriverAndOptions(String[] args) {
-		OperatingSystems operatingSystem = OperatingSystems.getCurrentOperatingSystem();
-		if (Arrays.asList(args)
-				.contains("visible")) {
-			isHidden = false;
-		}
+	static {
+		OperatingSystem operatingSystem = OperatingSystem.getCurrentOperatingSystem();
+
+		setupDriverAndOptions(operatingSystem);
+	}
+
+	public static void setupDriverAndOptions(OperatingSystem operatingSystem) {
 		switch (operatingSystem) {
 			case WINDOWS:
 				setupEdgeDriver();
@@ -35,7 +33,7 @@ public class BotWebDriver {
 			default:
 				throw new RuntimeException("Operating system not supported");
 		}
-		BotLogger.info("WebDriver initialized");
+		BotLogger.info("Driver initialized");
 	}
 
 	private static void setupEdgeDriver() {
@@ -43,9 +41,7 @@ public class BotWebDriver {
 		webDriverManager.setup();
 
 		EdgeOptions options = new EdgeOptions();
-		if (isHidden) {
-			options.addArguments("--headless");
-		}
+		options.addArguments("--headless");
 
 		driver = new EdgeDriver(options);
 	}
@@ -62,9 +58,7 @@ public class BotWebDriver {
 		webDriverManager.setup();
 
 		FirefoxOptions options = new FirefoxOptions();
-		if (isHidden) {
-			options.addArguments("--headless");
-		}
+		options.addArguments("--headless");
 
 		driver = new FirefoxDriver();
 	}
@@ -72,7 +66,7 @@ public class BotWebDriver {
 	public static void destroyWebDriver() {
 		driver.quit();
 
-		BotLogger.info("WebDriver destroyed");
+		BotLogger.info("Driver destroyed");
 	}
 
 	public static WebDriver getDriver() {

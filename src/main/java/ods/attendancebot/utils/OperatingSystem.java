@@ -1,12 +1,12 @@
 package ods.attendancebot.utils;
 
-public enum OperatingSystems {
+public enum OperatingSystem {
 	WINDOWS,
 	LINUX,
 	MACOS,
 	OTHER;
 
-	public static OperatingSystems getCurrentOperatingSystem() {
+	public static OperatingSystem getCurrentOperatingSystem() {
 		final String operatingSystemProperty = System.getProperty("os.name")
 				.toLowerCase();
 
