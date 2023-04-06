@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>bot</groupId>
-    <artifactId>attendance-bot</artifactId>
-    <version>0.5.4</version>
+    <artifactId>blocking-bot</artifactId>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -19,12 +19,12 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.4.0</version>
+            <version>4.8.3</version>
         </dependency>
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>5.3.0</version>
+            <version>5.3.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -76,7 +76,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ods.attendancebot.AttendanceBot</mainClass>
+                            <mainClass>ods.blockingbot.BlockingBot</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

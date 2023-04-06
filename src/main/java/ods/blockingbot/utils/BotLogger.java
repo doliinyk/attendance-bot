@@ -1,4 +1,4 @@
-package ods.attendancebot.utils;
+package ods.blockingbot.utils;
 
 import org.apache.log4j.Logger;
 

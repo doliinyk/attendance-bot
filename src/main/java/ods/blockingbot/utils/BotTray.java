@@ -1,8 +1,7 @@
-package ods.attendancebot.utils;
+package ods.blockingbot.utils;
 
-import ods.attendancebot.AttendanceBot;
-import ods.attendancebot.constants.ResourceConstants;
-import ods.attendancebot.handlers.AttendanceHandler;
+import ods.blockingbot.BlockingBot;
+import ods.blockingbot.handlers.BlockingHandler;
 
 import java.awt.*;
 import java.awt.TrayIcon.MessageType;
@@ -18,12 +17,12 @@ public class BotTray {
 	static {
 		if (SystemTray.isSupported()) {
 			try {
-				URL url = AttendanceBot.class.getClassLoader()
-						.getResource(ResourceConstants.IMAGE_FILE_NAME);
+				URL url = BlockingBot.class.getClassLoader()
+						.getResource("images/icon.png");
 				Image image = Toolkit.getDefaultToolkit()
 						.getImage(url);
 
-				trayIcon = new TrayIcon(image, "Attendance bot");
+				trayIcon = new TrayIcon(image, "Blocking bot");
 				trayIcon.setImageAutoSize(true);
 
 				createMenu();
@@ -41,7 +40,7 @@ public class BotTray {
 		logItem.addActionListener(event -> {
 			try {
 				Desktop.getDesktop()
-						.open(Paths.get("attendance-bot.log")
+						.open(Paths.get("blocking-bot.log")
 								.toFile());
 			} catch (IOException e) {
 				BotLogger.error(e.getMessage());
@@ -49,7 +48,7 @@ public class BotTray {
 		});
 		exitItem.addActionListener(e -> {
 			BotLogger.info("Bot closed via tray icon");
-			AttendanceHandler.interrupt();
+			BlockingHandler.setIsWorking(false);
 		});
 
 		exitItem.setEnabled(false);
@@ -67,7 +66,7 @@ public class BotTray {
 
 	public static void sendNotification(String text, MessageType messageType) {
 		if (SystemTray.isSupported()) {
-			trayIcon.displayMessage("Attendance bot", text, messageType);
+			trayIcon.displayMessage("Blocking bot", text, messageType);
 		}
 	}
 

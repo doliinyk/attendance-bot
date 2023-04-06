@@ -1,2 +1,2 @@
-# Attendance bot
-Bot for Moodle system automatic attendance
+# Blocking bot
+Bot for Moodle system sessions blocking

@@ -1,4 +1,4 @@
-package ods.attendancebot.utils;
+package ods.blockingbot.utils;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;

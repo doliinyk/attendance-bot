@@ -1,18 +1,16 @@
-package ods.attendancebot;
+package ods.blockingbot;
 
-import ods.attendancebot.handlers.AttendanceHandler;
-import ods.attendancebot.handlers.ConfigHandler;
-import ods.attendancebot.handlers.TimeEventHandler;
-import ods.attendancebot.utils.BotLogger;
-import ods.attendancebot.utils.BotTray;
-import ods.attendancebot.utils.BotDriver;
+import ods.blockingbot.handlers.BlockingHandler;
+import ods.blockingbot.handlers.ConfigHandler;
+import ods.blockingbot.utils.BotDriver;
+import ods.blockingbot.utils.BotLogger;
+import ods.blockingbot.utils.BotTray;
 import org.openqa.selenium.WebDriver;
 
-import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.io.FileNotFoundException;
 
-public class AttendanceBot {
+public class BlockingBot {
 	public static void main(String[] args) {
 		BotLogger.info("Starting bot");
 		BotTray.sendNotification("Starting bot", TrayIcon.MessageType.INFO);
@@ -27,12 +25,12 @@ public class AttendanceBot {
 		try {
 			initializeManagers();
 
-			AttendanceHandler.loginIntoAccount();
-			AttendanceHandler.handleAttendances();
+			BlockingHandler.loginIntoAccount();
+			BlockingHandler.handle();
 
 			BotLogger.info("Shutdown bot");
 			BotTray.sendNotification("Shutdown bot", TrayIcon.MessageType.INFO);
-		} catch (LoginException | FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			BotLogger.error(e.getMessage());
 			BotTray.sendNotification("Bot terminated. Error message contains in log", TrayIcon.MessageType.ERROR);
 		}
@@ -42,8 +40,8 @@ public class AttendanceBot {
 		WebDriver driver = BotDriver.getDriver();
 
 		ConfigHandler.initialize(driver);
-		TimeEventHandler.initialize(driver);
-		AttendanceHandler.initialize(driver);
+		BlockingHandler.initialize(driver);
+
 		BotLogger.info("Managers initialized");
 	}
 

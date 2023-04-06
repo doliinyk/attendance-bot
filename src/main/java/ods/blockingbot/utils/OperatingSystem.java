@@ -1,4 +1,4 @@
-package ods.attendancebot.utils;
+package ods.blockingbot.utils;
 
 public enum OperatingSystem {
 	WINDOWS,
