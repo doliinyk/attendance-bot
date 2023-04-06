@@ -12,6 +12,7 @@ public class BlockingHandler {
 	private static WebDriver driver;
 	private static int sessionsBlocked = 0;
 	private static boolean isWorking = true;
+	private static List<String> whitelist;
 
 	public static void initialize(WebDriver driver) {
 		BlockingHandler.driver = driver;
@@ -21,11 +22,14 @@ public class BlockingHandler {
 		BotLogger.info("Starting blocking sessions");
 		BotTray.enableExitItem();
 
+		whitelist = ConfigHandler.getArrayValueFromConfig("whitelist");
+
 		do {
 			block();
 		} while (isWorking);
 
 		BotLogger.info("Blocked " + sessionsBlocked + " sessions");
+		returnToMainWindow();
 		logoutFromAccount();
 	}
 
@@ -50,6 +54,16 @@ public class BlockingHandler {
 				.split("@")[0]);
 	}
 
+	private static void returnToMainWindow() {
+		driver.navigate()
+				.to("https://eguru.tk.te.ua/my/");
+
+		if (driver.getCurrentUrl()
+				.equals("https://eguru.tk.te.ua/login/index.php")) {
+			loginIntoAccount();
+		}
+	}
+
 	private static void block() {
 		driver.navigate()
 				.to("https://eguru.tk.te.ua/report/usersessions/user.php");
@@ -59,12 +73,15 @@ public class BlockingHandler {
 		sessions.forEach(session -> {
 			try {
 				String ip = session.findElement(By.xpath("./../..//a[contains(@href, 'iplookup')]")).getText();
+				if (whitelist.contains(ip)) {
+					return;
+				}
 
 				session.click();
 
 				BotLogger.info("Blocked " + ++sessionsBlocked + " session from IP " + ip);
 			} catch (Exception ignored) {
-				// ignored
+				returnToMainWindow();
 			}
 		});
 	}

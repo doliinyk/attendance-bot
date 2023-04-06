@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 
 public class ConfigHandler {
@@ -90,5 +91,9 @@ public class ConfigHandler {
 
 	public static String getValueFromConfig(String key) {
 		return (String) configJson.get(key);
+	}
+
+	public static List<String> getArrayValueFromConfig(String key) {
+		return (List<String>) configJson.get(key);
 	}
 }
